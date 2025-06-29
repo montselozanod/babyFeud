@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Feud - Isabella Kaori Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Open+Sans:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #e1bee7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .cherry-blossom {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            z-index: 1000000000;
+            background: radial-gradient(circle, #ffb3ba 0%, #ff9aa2 70%, #ff7b7b 100%);
+            border-radius: 50% 0 50% 50%;
+            opacity: 0.7;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .cherry-blossom:nth-child(odd) {
+            animation-delay: -2s;
+        }
+
+        .cherry-blossom:nth-child(even) {
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #ff9aa2, #ffb3ba, #ffc3a0);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 3px solid #fff;
+        }
+
+        .title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3.5rem;
+            color: #fff;
+            text-shadow: 3px 3px 0px #d81b60, 6px 6px 10px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .game-board-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .lights {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            border-radius: 35px;
+            background: linear-gradient(45deg, #ff4081, #ff80ab, #ffb3ba, #ffc1cc);
+            padding: 10px;
+            z-index: 1;
+        }
+
+        .light {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            animation: blink 2s infinite alternate;
+        }
+
+        @keyframes blink {
+            0% { background: #fff; box-shadow: 0 0 10px #fff; }
+            100% { background: #ffeb3b; box-shadow: 0 0 20px #ffeb3b; }
+        }
+
+        .game-board {
+            background: linear-gradient(145deg, #ffffff, #f5f5f5);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 4px solid #ff9aa2;
+            position: relative;
+            z-index: 2;
+        }
+
+        .question {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #d81b60;
+            background: linear-gradient(90deg, #fce4ec, #fff);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 6px solid #ff9aa2;
+        }
+
+        .answers-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .answer-row {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, #424242, #616161);
+            border-radius: 12px;
+            padding: 15px 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .answer-row:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: #fff;
+        }
+
+        .answer-row.revealed {
+            background: linear-gradient(90deg, #ff9aa2, #ffb3ba);
+            transform: scale(1.02);
+        }
+
+        .answer-row.hidden {
+            background: linear-gradient(90deg, #424242, #616161);
+        }
+
+        .answer-number {
+            background: #fff;
+            color: #424242;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-right: 20px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        .answer-row.revealed .answer-number {
+            color: #d81b60;
+        }
+
+        .answer-text {
+            flex: 1;
+            color: transparent;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .answer-row.revealed .answer-text {
+            color: #fff;
+        }
+
+        .answer-points {
+            background: #fff;
+            color: #d81b60;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s ease;
+        }
+
+        .answer-row.revealed .answer-points {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .strikes-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .strike {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #424242, #616161);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: transparent;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+
+        .strike.active {
+            background: linear-gradient(45deg, #f44336, #e53935);
+            color: #fff;
+            animation: strikeFlash 0.5s ease-in-out;
+        }
+
+        @keyframes strikeFlash {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); background: #ff1744; }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff9aa2, #ffb3ba);
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #d1c4e9, #c5cae9);
+            color: #5e35b1;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #f44336, #e53935);
+            color: #fff;
+        }
+
+        .btn-gold {
+            background: linear-gradient(45deg, #ffd700, #ffeb3b);
+            color: #d81b60;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .question-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .question-btn {
+            padding: 10px 20px;
+            border: 2px solid #ff9aa2;
+            background: #fff;
+            color: #d81b60;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .question-btn.active {
+            background: linear-gradient(45deg, #ff9aa2, #ffb3ba);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .question-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .score-display {
+            text-align: center;
+            background: linear-gradient(45deg, #fff, #fce4ec);
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #ff9aa2;
+            margin-top: 20px;
+        }
+
+        .score-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #d81b60;
+        }
+
+        .fast-money-container {
+            display: none;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 25px;
+            padding: 40px;
+            border: 4px solid #ffd700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .fast-money-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 0px #ff6f00;
+        }
+
+        .fast-money-question {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .fast-money-answer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .question {
+                font-size: 1.4rem;
+            }
+            
+            .game-board {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cherry-blossom" style="top: 10%; left: 5%;"></div>
+    <div class="cherry-blossom" style="top: 20%; right: 10%;"></div>
+    <div class="cherry-blossom" style="top: 60%; left: 8%;"></div>
+    <div class="cherry-blossom" style="top: 80%; right: 15%;"></div>
+    <div class="cherry-blossom" style="top: 40%; left: 15%;"></div>
+    <div class="cherry-blossom" style="top: 70%; right: 5%;"></div>
+
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">BABY FEUD</h1>
+            <p class="subtitle">Edición Especial Isabella Kaori 🌸</p>
+        </div>
+
+        <div class="question-selector">
+            <button class="question-btn active" onclick="loadQuestion(0)">Pregunta 1</button>
+            <button class="question-btn" onclick="loadQuestion(1)">Pregunta 2</button>
+            <button class="question-btn" onclick="loadQuestion(2)">Pregunta 3</button>
+            <button class="question-btn" onclick="loadQuestion(3)">Pregunta 4</button>
+            <button class="question-btn" onclick="loadQuestion(4)">Pregunta 5</button>
+            <button class="question-btn" onclick="loadQuestion(5)">Pregunta 6</button>
+            <button class="question-btn" onclick="loadQuestion(6)">Pregunta 7</button>
+            <button class="question-btn" onclick="loadQuestion(7)">Pregunta 8</button>
+            <button class="question-btn" onclick="loadQuestion(8)">Pregunta 9</button>
+            <button class="question-btn" onclick="loadQuestion(9)">Pregunta 10</button>
+        </div>
+
+        <div class="game-board-container">
+            <div class="lights" id="lights">
+                <!-- Lights will be generated by JavaScript -->
+            </div>
+            
+            <div class="game-board" id="main-game">
+                <div class="question" id="question">
+                    ¿Cuáles son las primeras palabras que dice un bebé? / What are baby's first words?
+                </div>
+
+                <div class="answers-grid" id="answers-grid">
+                    <!-- Answers will be populated by JavaScript -->
+                </div>
+
+                <div class="strikes-container">
+                    <div class="strike" id="strike1">❌</div>
+                    <div class="strike" id="strike2">❌</div>
+                    <div class="strike" id="strike3">❌</div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="revealNext()">Revelar Siguiente / Reveal Next</button>
+                    <button class="btn btn-secondary" onclick="revealAll()">Mostrar Todo / Show All</button>
+                    <button class="btn btn-danger" onclick="addStrike()">Strike!</button>
+                    <button class="btn btn-secondary" onclick="resetRound()">Nueva Ronda / New Round</button>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-text" id="score">Puntos Totales / Total Score: <span id="total-score">0</span></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameData = [
+            {
+                question: "Nombra uno de los nombres de niña más populares / Name one of the most popular baby girl names",
+                answers: [
+                    { text: "Sophia/Sofia", points: 25, revealed: false },
+                    { text: "María", points: 22, revealed: false },
+                    { text: "Emma", points: 18, revealed: false },
+                    { text: "Isabella", points: 15, revealed: false },
+                    { text: "Ana/Anna", points: 12, revealed: false },
+                    { text: "Olivia", points: 8, revealed: false }
+                ]
+            },
+            {
+                question: "¿Cuáles son las primeras palabras que dice un bebé? / What are baby's first words?",
+                answers: [
+                    { text: "Mamá / Mama", points: 35, revealed: false },
+                    { text: "Papá / Dada", points: 30, revealed: false },
+                    { text: "No / No", points: 15, revealed: false },
+                    { text: "Agua / Water", points: 10, revealed: false },
+                    { text: "Hola / Hi", points: 6, revealed: false },
+                    { text: "Adiós / Bye-bye", points: 4, revealed: false }
+                ]
+            },
+            {
+                question: "¿Qué cosas necesita un bebé recién nacido? / What does a newborn baby need?",
+                answers: [
+                    { text: "Pañales / Diapers", points: 40, revealed: false },
+                    { text: "Leche / Milk", points: 25, revealed: false },
+                    { text: "Ropa / Clothes", points: 15, revealed: false },
+                    { text: "Amor / Love", points: 12, revealed: false },
+                    { text: "Cuna / Crib", points: 5, revealed: false },
+                    { text: "Chupón / Pacifier", points: 3, revealed: false }
+                ]
+            },
+            {
+                question: "¿Qué dicen los papás primerizos? / What do new parents say?",
+                answers: [
+                    { text: "No dormí nada / I didn't sleep at all", points: 35, revealed: false },
+                    { text: "¿Es normal esto? / Is this normal?" , points: 25, revealed: false },
+                    { text: "Qué lindo/a / How cute" , points: 20, revealed: false },
+                    { text: "Huele mal / It smells bad", points: 10, revealed: false },
+                    { text: "Tengo miedo / I'm scared", points: 7, revealed: false },
+                    { text: "Necesito café / I need coffee", points: 3, revealed: false }
+                ]
+            },
+            {
+                question: "Menciona una razón por la que los bebés se levantan en la noche / Name a reason a baby might wake up in the middle of the night",
+                answers: [
+                    { text: "Hambre / Hunger", points: 30, revealed: false },
+                    { text: "Pañal sucio / Dirty diaper", points: 25, revealed: false },
+                    { text: "Gases o cólicos / Gas or colic", points: 23, revealed: false },
+                    { text: "Enfermedad o Fiebre / Illness or fever", points: 12, revealed: false },
+                    { text: "Ruidos / Loud noises", points: 10, revealed: false },
+                ]
+            },
+            {
+                question: "Nombra algo que un bebé eventualmente dejará de usar / Name something a baby will eventually outgrow",
+                answers: [
+                    { text: "Ropa / Clothes", points: 30, revealed: false },
+                    { text: "Pañales / Diapers", points: 24, revealed: false },
+                    { text: "Chupete / Pacifiers", points: 21, revealed: false },
+                    { text: "Cuna / Crib", points: 15, revealed: false },
+                    { text: "Periquera / High chair or car seat", points: 10, revealed: false },
+                ]
+            },
+            {
+                question: "Menciona algo que hacen los bebés que si lo hace un adulto sería inapropiado / Name something a baby does that would be considered inappropriate for an adult",
+                answers: [
+                    { text: "Jugar con la comida / Playing with food", points: 28, revealed: false },
+                    { text: "Babear / Drooling", points: 25, revealed: false },
+                    { text: "Berrinches / Throwing tantrums", points: 20, revealed: false },
+                    { text: "Eructar / Burping", points: 17, revealed: false },
+                    { text: "Caminar sin ropa / Running around naked", points: 10, revealed: false },
+                ]
+            },
+            {
+                question: "Si pudieras ser bebé por un día, qué disfrutarías más? / If you could be a baby for a day, name something you would enjoy most.",
+                answers: [
+                    { text: "Dormir todo el día / Sleep all day", points: 27, revealed: false },
+                    { text: "Que me carguen / Being carried", points: 25, revealed: false },
+                    { text: "Jugar / Playing with toys", points: 20, revealed: false },
+                    { text: "No hacer nada / Doing nothing all day", points: 15, revealed: false },
+                    { text: "Que me den de comer  / Being fed", points: 13, revealed: false },
+                ]
+            },
+            {
+                question: "Nombra algo que los papás compran antes de que nazca su bebé / Name something parents buy before baby arrives",
+                answers: [
+                    { text: "Cuna / Crib", points: 35, revealed: false },
+                    { text: "Pañales / Diapers", points: 29, revealed: false },
+                    { text: "Silla de carro / Car seat", points: 17, revealed: false },
+                    { text: "Ropita de bebé / Baby clothes", points: 12, revealed: false },
+                    { text: "Biberón / baby bottles", points: 7, revealed: false },
+                ]
+            },
+            {
+                question: "Nombra algo que hace un bebé que a los adultos les parece tierno  / Name something a baby does that adults find cute",
+                answers: [
+                    { text: "Sonreír / Smile", points: 41, revealed: false },
+                    { text: "Dormir / Sleep", points: 23, revealed: false },
+                    { text: "Balbucear (Hablar) / Babble (Talk)", points: 19, revealed: false },
+                    { text: "Gatear / Crawl", points: 10, revealed: false },
+                    { text: "Aplaudir / Clap", points: 7, revealed: false },
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let revealIndex = 0;
+        let totalScore = 0;
+        let strikes = 0;
+
+        // Initialize lights around the board
+        function createLights() {
+            const lightsContainer = document.getElementById('lights');
+            const numLights = 24;
+            
+            for (let i = 0; i < numLights; i++) {
+                const light = document.createElement('div');
+                light.className = 'light';
+                
+                // Position lights around the perimeter
+                const angle = (i / numLights) * 2 * Math.PI;
+                const radius = 47; // Percentage from center
+                const x = 50 + radius * Math.cos(angle);
+                const y = 50 + radius * Math.sin(angle);
+                
+                light.style.left = `${x}%`;
+                light.style.top = `${y}%`;
+                light.style.animationDelay = `${i * 0.1}s`;
+                
+                lightsContainer.appendChild(light);
+            }
+        }
+
+        function playCorrectAnswerSound() {
+            // Create a more dramatic strike sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Classic "ding" sound with harmonic overtones
+            const fundamental = 1108.73; // C#6
+            const harmonics = [fundamental, fundamental * 2, fundamental * 3];
+            
+            harmonics.forEach((freq, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                const volume = 0.1 / (index + 1); // Harmonics get quieter
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.8);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.8);
+            }); 
+        }
+
+        function playStrikeSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Create a harsh buzzer sound at low frequency
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+            oscillator.type = 'sawtooth'; // Harsh, buzzy sound
+            
+            // Sharp attack, sustained buzz
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.8);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1.2);
+        }
+
+        function addStrike() {
+            if (strikes < 3) {
+                strikes++;
+                const strikeElement = document.getElementById(`strike${strikes}`);
+                strikeElement.classList.add('active');
+                playStrikeSound();
+                
+                if (strikes === 3) {
+                    setTimeout(() => {
+                        alert('¡3 Strikes! ¡Se acabó la ronda! / 3 Strikes! Round over!');
+                    }, 500);
+                }
+            }
+        }
+
+        function loadQuestion(index) {
+            currentQuestion = index;
+            revealIndex = 0;
+            strikes = 0;
+            
+            // Reset strikes
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`strike${i}`).classList.remove('active');
+            }
+            
+            // Update question selector buttons
+            document.querySelectorAll('.question-btn').forEach((btn, i) => {
+                if (i < 5) { // Only for regular questions
+                    btn.classList.toggle('active', i === index);
+                }
+            });
+
+            // Reset answers
+            gameData[currentQuestion].answers.forEach(answer => {
+                answer.revealed = false;
+            });
+
+            hideFastMoney();
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const questionEl = document.getElementById('question');
+            const answersGrid = document.getElementById('answers-grid');
+            
+            questionEl.textContent = gameData[currentQuestion].question;
+            
+            answersGrid.innerHTML = '';
+            
+            gameData[currentQuestion].answers.forEach((answer, index) => {
+                const answerRow = document.createElement('div');
+                answerRow.className = `answer-row ${answer.revealed ? 'revealed' : 'hidden'}`;
+                answerRow.onclick = () => revealAnswer(index);
+                
+                answerRow.innerHTML = `
+                    <div class="answer-number">${index + 1}</div>
+                    <div class="answer-text">${answer.revealed ? answer.text : ''}</div>
+                    <div class="answer-points">${answer.points}</div>
+                `;
+                
+                answersGrid.appendChild(answerRow);
+            });
+
+            updateScore();
+        }
+
+        function revealAnswer(index) {
+            gameData[currentQuestion].answers[index].revealed = true;
+            renderQuestion();
+            playCorrectAnswerSound();
+        }
+
+        function revealNext() {
+            if (revealIndex < gameData[currentQuestion].answers.length) {
+                revealAnswer(revealIndex);
+                revealIndex++;
+            }
+        }
+
+        function revealAll() {
+            gameData[currentQuestion].answers.forEach((answer, index) => {
+                answer.revealed = true;
+            });
+            renderQuestion();
+        }
+
+        function resetRound() {
+            gameData[currentQuestion].answers.forEach(answer => {
+                answer.revealed = false;
+            });
+            revealIndex = 0;
+            strikes = 0;
+            
+            // Reset strikes
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`strike${i}`).classList.remove('active');
+            }
+            
+            renderQuestion();
+        }
+
+        function updateScore() {
+            const revealed = gameData[currentQuestion].answers.filter(a => a.revealed);
+            const roundScore = revealed.reduce((sum, answer) => sum + answer.points, 0);
+            document.getElementById('total-score').textContent = roundScore;
+        }
+
+        function showFastMoney() {
+            document.getElementById('main-game').style.display = 'none';
+            document.getElementById('fast-money').style.display = 'block';
+            
+            // Remove active class from all question buttons
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        function hideFastMoney() {
+            document.getElementById('main-game').style.display = 'block';
+            document.getElementById('fast-money').style.display = 'none';
+        }
+
+        // Initialize the game
+        createLights();
+        renderQuestion();
+    </script>
+</body>
+</html>
